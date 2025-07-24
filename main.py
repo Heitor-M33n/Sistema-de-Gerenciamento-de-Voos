@@ -1,102 +1,86 @@
 from abc import ABC, abstractmethod
 import uuid
 
-# -------------------------------------------------
-# 1) Interface                                   🡇
-# -------------------------------------------------
 class Logavel(ABC):
     """Qualquer classe logável DEVE implementar logar_entrada()."""
     @abstractmethod
     def logar_entrada(self):
         pass
 
-
-# -------------------------------------------------
-# 2) Mixins                                      🡇
-# -------------------------------------------------
 class IdentificavelMixin:
     """Gera um ID único; combine-o com outras classes."""
-    def __init__(self):
-        # TODO: gerar e armazenar um ID (use uuid.uuid4())
-        pass
-    def get_id(self):
-        # TODO: retornar o ID
-        pass
-
+    def __init__(self) -> None:
+        self.id = uuid.uuid4()
+        
+    def get_id(self) -> uuid.UUID:
+        return self.id
 
 class AuditavelMixin:
     """Fornece logs simples ao console."""
     def log_evento(self, evento: str):
-        # TODO: imprimir no formato  [LOG] <mensagem>
-        pass
+        print(f"[LOG] {evento}")
 
-
-# -------------------------------------------------
-# 3) Classe base Pessoa                          🡇
-# -------------------------------------------------
 class Pessoa:
     """Classe base para pessoas do sistema."""
-    def __init__(self, nome: str, cpf: str):
-        # TODO: armazenar nome e cpf como atributos protegidos
-        pass
+    def __init__(self, nome: str, cpf: str) -> None:
+        self._nome = nome
+        self._cpf = cpf
+
     @property
-    def nome(self):
-        # TODO: retornar o nome
-        pass
-    def __str__(self):
-        # TODO: "Maria (123.456.789-00)"
-        pass
+    def nome(self) -> str:
+        return self._nome
+    
+    def __str__(self) -> str:
+        return f"{self._nome} ({self._cpf})"
 
-
-# -------------------------------------------------
-# 4) Bagagem — classe simples                    🡇
-# -------------------------------------------------
 class Bagagem:
-    def __init__(self, descricao: str, peso: float):
+    def __init__(self, descricao: str, peso: float) -> None:
         self.descricao = descricao
-        self.peso = peso  # kg
-    def __str__(self):
+        self.peso = peso
+    def __str__(self) -> str:
         return f"{self.descricao} – {self.peso} kg"
 
-
-# -------------------------------------------------
-# 5) Passageiro                                  🡇
-# -------------------------------------------------
 class Passageiro(Pessoa):
     """Herda de Pessoa e possui bagagens."""
-    def __init__(self, nome: str, cpf: str):
-        # TODO: chamar super().__init__ e criar lista vazia de bagagens
-        pass
-    def adicionar_bagagem(self, bagagem: Bagagem):
-        # TODO: adicionar bagagem à lista
-        pass
-    def listar_bagagens(self):
-        # TODO: imprimir as bagagens
-        pass
+    def __init__(self, nome: str, cpf: str) -> None:
+        super().__init__(nome, cpf)
+        self._bagagens = []
 
+    def adicionar_bagagem(self, bagagem: Bagagem) -> None:
+        if isinstance(bagagem, Bagagem):
+            self._bagagens.append(bagagem)
+        else:
+            raise ValueError("Bagagem deve ser uma instância da classe Bagagem.")
 
-# -------------------------------------------------
-# 6) Funcionario (herança múltipla + mixins)     🡇
-# -------------------------------------------------
-# TODO: Implementar a classe Funcionario
-# - Herda de Pessoa, IdentificavelMixin e Logavel (pode usar AuditavelMixin)
-# - Atributos: cargo, matricula
-# - Métodos:
-#   • exibir_dados() → imprime nome, cargo, matrícula e ID
-#   • logar_entrada() → registra no log
+    def listar_bagagens(self) -> None:
+        if not self._bagagens:
+            print(f"{self.nome} não possui bagagens.")
+        else:
+            print(f"Bagagens de {self.nome}:")
+            for bagagem in self._bagagens:
+                print(f"- {bagagem}")
 
+class Funcionario(Logavel, Pessoa, IdentificavelMixin, AuditavelMixin):
+    """Classe para funcionários do sistema."""
+    def __init__(self, nome: str, cpf: str, cargo: str, matricula: str) -> None:
+        Pessoa.__init__(self, nome, cpf)
+        IdentificavelMixin.__init__(self)
+        self._cargo = cargo
+        self._matricula = matricula
 
-# -------------------------------------------------
-# 7) MiniAeronave                                🡇
-# -------------------------------------------------
+    def exibir_dados(self) -> None:
+        print(f"Nome: {self.nome}, Cargo: {self.cargo}, Matrícula: {self.matricula}, ID: {self.get_id()}")
+
+    def logar_entrada(self) -> None:
+        self.log_evento(f"{self.nome} logou no sistema.")
+
 class MiniAeronave:
     """Objeto da composição dentro de Voo."""
     def __init__(self, modelo: str, capacidade: int):
-        # TODO: armazenar modelo e capacidade
-        pass
+        self.modelo = modelo
+        self.capacidade = capacidade
     def resumo_voo(self):
-        # TODO: retornar string com modelo e capacidade
-        pass
+        return f"{self.modelo} (Capacidade: {self.capacidade})"
 
 
 # -------------------------------------------------
