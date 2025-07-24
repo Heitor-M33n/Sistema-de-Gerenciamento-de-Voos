@@ -34,6 +34,7 @@ class Pessoa:
         return f"{self._nome} ({self._cpf})"
 
 class Bagagem:
+    """Classe para bagagens de passageiros."""
     def __init__(self, descricao: str, peso: float) -> None:
         self.descricao = descricao
         self.peso = peso
