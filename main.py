@@ -131,32 +131,40 @@ class Voo:
             for tripulante in self.tripulacao:
                 print(f"- {tripulante}")    
     
-    
-# -------------------------------------------------
-# 9) CompanhiaAerea                              🡇
-# -------------------------------------------------
+
 class CompanhiaAerea:
     """Agrupa seus voos (has-a)."""
     def __init__(self, nome: str):
-        # TODO: validar nome (≥ 3 letras) e criar lista vazia de voos
-        pass
+        if len(nome) <= 3:
+            raise ValueError("Nome da companhia aérea deve ter mais de 3 caracteres.")
+        self._nome = nome
+        self.voos = []
+        
     @property
     def nome(self):
-        # TODO: retornar nome
-        pass
+        return self._nome
     @nome.setter
     def nome(self, novo_nome: str):
-        # TODO: validar + atualizar nome
-        pass
+        if len(novo_nome) <= 3:
+            raise ValueError("Nome da companhia aérea deve ter mais de 3 caracteres.")
+        self._nome = novo_nome
+        
     def adicionar_voo(self, voo):
-        # TODO: adicionar voo à lista
-        pass
+        if isinstance(voo, Voo):
+            if voo in self.voos:
+                print(f"Voo {voo.numero_voo} já está cadastrado na companhia {self.nome}.")
+                return
+            self.voos.append(voo)
+        else:
+            raise ValueError("Voo deve ser uma instância da classe Voo.")
     def buscar_voo(self, numero: str):
-        # TODO: retornar voo ou None
-        pass
+        for voo in self.voos:
+            if voo.numero_voo == numero:
+                return voo
+        print(f"Voo {numero} não encontrado na companhia {self.nome}.")
     def listar_voos(self):
-        # TODO: imprimir todos os voos
-        pass
+        for voo in self.voos:
+            print(f" Voo {voo.numero_voo} de {voo.origem} para {voo.destino} - Aeronave: {voo.aeronave.resumo_voo()}")
 
 
 # -------------------------------------------------
@@ -185,4 +193,6 @@ if __name__ == "__main__":
       • Mostrar saídas no console para validar implementações.
     """
     pass
+
+
 
