@@ -84,19 +84,54 @@ class MiniAeronave:
         return f"{self.modelo} (Capacidade: {self.capacidade})"
 
 
-# -------------------------------------------------
-# 8) Voo (composição com MiniAeronave)           🡇
-# -------------------------------------------------
-# TODO: Implementar a classe Voo
-# - Atributos: numero_voo, origem, destino, aeronave
-# - Listas: passageiros, tripulacao
-# - Métodos:
-#   • adicionar_passageiro()  (verificar duplicidade e capacidade)
-#   • adicionar_tripulante()
-#   • listar_passageiros()
-#   • listar_tripulacao()
-
-
+class Voo:
+    '''Classe para representar um voo'''
+    def __init__(self, numero_voo: str, origem: str, destino: str, aeronave: MiniAeronave):
+        self.numero_voo = numero_voo
+        self.origem = origem
+        self.destino = destino
+        if isinstance(aeronave, MiniAeronave):
+            self.aeronave = aeronave
+        else:
+            raise ValueError("Aeronave deve ser uma instância da classe MiniAeronave.")
+        self.passageiros = []
+        self.tripulacao = []
+        
+    def adicionar_passageiro(self, passageiro: Passageiro):
+        if isinstance(passageiro, Passageiro):
+            if passageiro in self.passageiros:
+                print(f"Passageiro {passageiro.nome} já está no voo {self.numero_voo}.")
+                return
+            if len(self.passageiros) < self.aeronave.capacidade:
+                self.passageiros.append(passageiro)
+            else:
+                print(f"Voo {self.numero_voo} está cheio. Não é possível adicionar {passageiro.nome}.")
+        else:
+            raise ValueError("Passageiro deve ser uma instância da classe Passageiro.")
+    
+    def adicionar_tripulante(self, funcionario: Funcionario):
+        if isinstance(funcionario, Funcionario):
+            self.tripulacao.append(funcionario)
+        else:
+            raise ValueError("Tripulante deve ser uma instância da classe Funcionario.")
+        
+    def listar_passageiros(self):
+        if not self.passageiros:
+            print(f"Voo {self.numero_voo} não possui passageiros.")
+        else:
+            print(f"Passageiros do voo {self.numero_voo}, de {self.origem} para {self.destino}:")
+            for passageiro in self.passageiros:
+                print(f"- {passageiro}")
+    
+    def listar_tripulacao(self):
+        if not self.tripulacao:
+            print(f"Voo {self.numero_voo} não possui tripulação.")
+        else:
+            print(f"Tripulação do voo {self.numero_voo}, de {self.origem} para {self.destino}:")
+            for tripulante in self.tripulacao:
+                print(f"- {tripulante}")    
+    
+    
 # -------------------------------------------------
 # 9) CompanhiaAerea                              🡇
 # -------------------------------------------------
