@@ -168,6 +168,7 @@ class CompanhiaAerea:
 
 
 class Auditor(IdentificavelMixin, Logavel):
+    '''Auditor responsável por auditar os voos'''
     def __init__(self, nome: str):
         super().__init__()
         self.nome = nome
