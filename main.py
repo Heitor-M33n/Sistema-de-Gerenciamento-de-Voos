@@ -167,6 +167,30 @@ class CompanhiaAerea:
             print(f" Voo {voo.numero_voo} de {voo.origem} para {voo.destino} - Aeronave: {voo.aeronave.resumo_voo()}")
 
 
+class Auditor(IdentificavelMixin, Logavel):
+    def __init__(self, nome: str):
+        super().__init__()
+        self.nome = nome
+    def logar_entrada(self):
+        print(f"[LOG] Auditor {self.nome} logou no sistema.")
+    def auditar_voo(self, voo: Voo):
+        if isinstance(voo, Voo):
+            print(f"Auditoria: {voo.numero_voo}:")
+            conformidade = True
+            if len(voo.passageiros) > voo.aeronave.capacidade:
+                print(f"  - Passageiros excedem a capacidade ({len(voo.passageiros)} > {voo.aeronave.capacidade})")
+                conformidade = False
+            if len(voo.tripulacao) == 0:
+                print("  - Nenhum tripulante registrado.")
+                conformidade = False
+            if conformidade == True:
+                print("  - Voo em conformidade.")
+            else:
+                print("  - Voo NÃO está em conformidade.")
+    def __str__(self):
+        return f"Auditor {self.nome} (ID: {self.get_id()})"
+            
+        
 # -------------------------------------------------
 # 10) Auditor (Identificável + Logável)          🡇
 # -------------------------------------------------
