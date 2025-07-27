@@ -189,34 +189,52 @@ class Auditor(IdentificavelMixin, Logavel):
                 print("  - Voo NÃO está em conformidade.")
     def __str__(self):
         return f"Auditor {self.nome} (ID: {self.get_id()})"
-            
-        
-# -------------------------------------------------
-# 10) Auditor (Identificável + Logável)          🡇
-# -------------------------------------------------
-# TODO: Implementar a classe Auditor
-# - Herda de IdentificavelMixin e Logavel
-# - Atributo: nome
-# - Métodos:
-#   • logar_entrada() → registra entrada no sistema
-#   • auditar_voo(voo) → verifica:
-#       ▸ passageiros ≤ capacidade
-#       ▸ existe ao menos 1 tripulante
-#     imprime relatório de conformidade
-#   • __str__() → "Auditor <nome> (ID: ...)"
-
-
-# -------------------------------------------------
-# 11) Bloco de teste                             🡇
-# -------------------------------------------------
+    
+    
 if __name__ == "__main__":
-    """
-    TODO:
-      • Criar 2 companhias, 2 voos cada, passageiros, funcionários e auditor.
-      • Adicionar bagagens, listar passageiros, auditar voos.
-      • Mostrar saídas no console para validar implementações.
-    """
-    pass
+    Gol = CompanhiaAerea("Gol Linhas Aéreas")
+    Qatar = CompanhiaAerea("Qatar Airways")
+    vgol1 = Voo("GOL564", "Pau dos Ferros", "Mossoró", MiniAeronave("Boeing 737-700", 138))
+    vgol2 = Voo("GOL744", "São Paulo", "Montevidéu", MiniAeronave("Boeing 737 MAX 8", 186))
+    vqatar1 = Voo("QTR123", "Doha", "Muscat", MiniAeronave("Airbus A320 / A321", 150))
+    vqatar2 = Voo("QTR456", "Doha", "Sao Paulo", MiniAeronave("Airbus A350-1000", 350))
+    Gol.adicionar_voo(vgol1)
+    Gol.adicionar_voo(vgol2)
+    Qatar.adicionar_voo(vqatar1)
+    Qatar.adicionar_voo(vqatar2)
+    
+    p1 = Passageiro("Robson Junior", "123.456.789-10")
+    p2 = Passageiro("Fabricio Osorio", "987.654.321-00")
+    p3 = Passageiro("Heitor Ferreira", "111.222.333-44")
+    p1.adicionar_bagagem(Bagagem("Mala média", 20.5))
+    p1.adicionar_bagagem(Bagagem("Mochila", 7.2))
+    p2.adicionar_bagagem(Bagagem("Mala grande", 30.0))
+    
+    f1 = Funcionario("Darth Vader", "000.111.222-33", "Piloto", "DV123")
+    f2 = Funcionario("Luke Skywalker", "444.555.666-77", "Co-piloto", "LS456")
+    f3 = Funcionario("Princesa Leia", "888.999.000-11", "Comissária", "LO789")
+    
+    a1 = Auditor("Yoda")
+    
+    vgol1.adicionar_passageiro(p1)
+    vgol1.adicionar_passageiro(p2)
+    vgol2.adicionar_passageiro(p3)
+    
+    vgol1.adicionar_tripulante(f1)
+    vgol1.adicionar_tripulante(f2)
+    vgol1.adicionar_tripulante(f3)
+    
+    vgol1.listar_passageiros()
+    p1.listar_bagagens()
+    p2.listar_bagagens()
+    p3.listar_bagagens()
+    
+    vgol1.listar_tripulacao()
+    vgol2.listar_tripulacao()
+    a1.logar_entrada()
+    a1.auditar_voo(vgol1)
+    a1.auditar_voo(vgol2)
+
 
 
 
