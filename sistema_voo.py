@@ -17,7 +17,7 @@ class IdentificavelMixin:
 
 class AuditavelMixin:
     """Fornece logs simples ao console."""
-    def log_evento(self, evento: str):
+    def log_evento(self, evento: str) -> None:
         print(f"[LOG] {evento}")
 
 class Pessoa:
@@ -31,13 +31,14 @@ class Pessoa:
         return self._nome
     
     def __str__(self) -> str:
-        return f"{self._nome} ({self._cpf})"
+        return f"{self._nome}, ({self._cpf})"
 
 class Bagagem:
     """Classe para bagagens de passageiros."""
     def __init__(self, descricao: str, peso: float) -> None:
         self.descricao = descricao
         self.peso = peso
+        
     def __str__(self) -> str:
         return f"{self.descricao} – {self.peso} kg"
 
@@ -75,18 +76,24 @@ class Funcionario(Logavel, Pessoa, IdentificavelMixin, AuditavelMixin):
     def logar_entrada(self) -> None:
         self.log_evento(f"{self.nome} logou no sistema.")
 
+    def __str__(self) -> str:
+        return self.nome
+
 class MiniAeronave:
     """Objeto da composição dentro de Voo."""
-    def __init__(self, modelo: str, capacidade: int):
+    def __init__(self, modelo: str, capacidade: int) -> None:
         self.modelo = modelo
         self.capacidade = capacidade
-    def resumo_voo(self):
+        
+    def resumo_voo(self) -> str:
         return f"{self.modelo} (Capacidade: {self.capacidade})"
 
+    def __str__(self) -> str:
+        return self.resumo_voo
 
 class Voo:
-    '''Classe para representar um voo'''
-    def __init__(self, numero_voo: str, origem: str, destino: str, aeronave: MiniAeronave):
+    """Classe para representar um voo"""
+    def __init__(self, numero_voo: str, origem: str, destino: str, aeronave: MiniAeronave) -> None:
         self.numero_voo = numero_voo
         self.origem = origem
         self.destino = destino
@@ -97,100 +104,109 @@ class Voo:
         self.passageiros = []
         self.tripulacao = []
         
-    def adicionar_passageiro(self, passageiro: Passageiro):
-        if isinstance(passageiro, Passageiro):
-            if passageiro in self.passageiros:
-                print(f"Passageiro {passageiro.nome} já está no voo {self.numero_voo}.")
-                return
-            if len(self.passageiros) < self.aeronave.capacidade:
-                self.passageiros.append(passageiro)
-            else:
-                print(f"Voo {self.numero_voo} está cheio. Não é possível adicionar {passageiro.nome}.")
+    def adicionar_passageiro(self, passageiro: Passageiro) -> None:
+        if not isinstance(passageiro, Passageiro):
+            raise("Passageiro deve ser uma instância da classe Passageiro.")
+        elif not len(self.passageiros) < self.aeronave.capacidade:
+            print("Aeronave está cheia.")
         else:
-            raise ValueError("Passageiro deve ser uma instância da classe Passageiro.")
+            print(f"{passageiro} Adicionado ao voo")
+            self.passageiros.append(passageiro)
     
-    def adicionar_tripulante(self, funcionario: Funcionario):
-        if isinstance(funcionario, Funcionario):
-            self.tripulacao.append(funcionario)
+    def adicionar_tripulante(self, funcionario: Funcionario) -> None:
+        if not isinstance(funcionario, Funcionario):
+            raise ValueError("Funcionário deve ser uma instância da classe Funcionario.")
         else:
-            raise ValueError("Tripulante deve ser uma instância da classe Funcionario.")
+            self.tripulacao.append(funcionario)
         
-    def listar_passageiros(self):
+    def listar_passageiros(self) -> None:
         if not self.passageiros:
             print(f"Voo {self.numero_voo} não possui passageiros.")
         else:
-            print(f"Passageiros do voo {self.numero_voo}, de {self.origem} para {self.destino}:")
+            print(f"Passageiros do voo {self.numero_voo}:")
             for passageiro in self.passageiros:
                 print(f"- {passageiro}")
     
-    def listar_tripulacao(self):
+    def listar_tripulacao(self) -> None:
         if not self.tripulacao:
             print(f"Voo {self.numero_voo} não possui tripulação.")
         else:
-            print(f"Tripulação do voo {self.numero_voo}, de {self.origem} para {self.destino}:")
+            print(f"Tripulação do voo {self.numero_voo}:")
             for tripulante in self.tripulacao:
                 print(f"- {tripulante}")    
     
-
 class CompanhiaAerea:
     """Agrupa seus voos (has-a)."""
-    def __init__(self, nome: str):
+    def __init__(self, nome: str) -> None:
         if len(nome) <= 3:
             raise ValueError("Nome da companhia aérea deve ter mais de 3 caracteres.")
-        self._nome = nome
-        self.voos = []
+        else:
+            self._nome = nome
+            self.voos = []
         
     @property
-    def nome(self):
+    def nome(self) -> str:
         return self._nome
+        
     @nome.setter
-    def nome(self, novo_nome: str):
+    def nome(self, novo_nome: str) -> None:
         if len(novo_nome) <= 3:
             raise ValueError("Nome da companhia aérea deve ter mais de 3 caracteres.")
-        self._nome = novo_nome
-        
-    def adicionar_voo(self, voo):
-        if isinstance(voo, Voo):
-            if voo in self.voos:
-                print(f"Voo {voo.numero_voo} já está cadastrado na companhia {self.nome}.")
-                return
-            self.voos.append(voo)
         else:
+            self._nome = novo_nome
+        
+    def adicionar_voo(self, voo: Voo) -> None:
+        if not isinstance(voo, Voo):
             raise ValueError("Voo deve ser uma instância da classe Voo.")
-    def buscar_voo(self, numero: str):
+        elif voo in self.voos:
+            print(f"Voo {voo.numero_voo} já está cadastrado na companhia {self.nome}.")
+        else:
+            self.voos.append(voo)
+            
+    def buscar_voo(self, numero: str) -> Voo:
         for voo in self.voos:
             if voo.numero_voo == numero:
                 return voo
-        print(f"Voo {numero} não encontrado na companhia {self.nome}.")
-    def listar_voos(self):
+        print(f"Voo {numero} não encontrado.")
+        
+    def listar_voos(self) -> None:
+        print(f"Lista de voos de {self.nome}:")
         for voo in self.voos:
-            print(f" Voo {voo.numero_voo} de {voo.origem} para {voo.destino} - Aeronave: {voo.aeronave.resumo_voo()}")
+            print(f" Voo {voo.numero_voo}, de {voo.origem} para {voo.destino} - Aeronave: {voo.aeronave.resumo_voo()}")
 
-
-class Auditor(IdentificavelMixin, Logavel):
+class Auditor(IdentificavelMixin, AuditavelMixin, Logavel):
     '''Auditor responsável por auditar os voos'''
-    def __init__(self, nome: str):
+    def __init__(self, nome: str) -> None:
         super().__init__()
         self.nome = nome
-    def logar_entrada(self):
-        print(f"[LOG] Auditor {self.nome} logou no sistema.")
-    def auditar_voo(self, voo: Voo):
-        if isinstance(voo, Voo):
-            print(f"Auditoria: {voo.numero_voo}:")
-            conformidade = True
-            if len(voo.passageiros) > voo.aeronave.capacidade:
-                print(f"  - Passageiros excedem a capacidade ({len(voo.passageiros)} > {voo.aeronave.capacidade})")
-                conformidade = False
-            if len(voo.tripulacao) == 0:
-                print("  - Nenhum tripulante registrado.")
-                conformidade = False
-            if conformidade == True:
-                print("  - Voo em conformidade.")
-            else:
-                print("  - Voo NÃO está em conformidade.")
-    def __str__(self):
+        
+    def logar_entrada(self) -> None:
+        self.log_evento(f"Auditor {self.nome} logou no sistema.")
+        
+    def auditar_voo(self, voo: Voo) -> bool:
+        if not isinstance(voo, Voo):
+            raise ValueError("Voo deve ser uma instância da classe Voo")
+            
+        print(f"Auditoria: {voo.numero_voo}:")
+        conformidade = True
+        
+        if len(voo.passageiros) > voo.aeronave.capacidade:
+            print(f"- Passageiros excedem a capacidade ({len(voo.passageiros)} > {voo.aeronave.capacidade})")
+            conformidade = False
+            
+        if not voo.tripulacao:
+            print("- Nenhum tripulante registrado.")
+            conformidade = False
+            
+        if conformidade == True:
+            print("- Voo em conformidade.")
+        else:
+            print("- Voo NÃO está em conformidade.")
+
+        return conformidade
+                
+    def __str__(self) -> str:
         return f"Auditor {self.nome} (ID: {self.get_id()})"
-    
     
 if __name__ == "__main__":
     Gol = CompanhiaAerea("Gol Linhas Aéreas")
