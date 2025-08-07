@@ -93,7 +93,7 @@ class MiniAeronave:
 
 class Voo:
     """Classe para representar um voo"""
-    def __init__(self, numero_voo: str, origem: str, destino: str, aeronave: MiniAeronave = Nonemodelo: str = None, capacidade: int = None) -> None:
+    def __init__(self, numero_voo: str, origem: str, destino: str, aeronave: MiniAeronave = None, modelo: str = None, capacidade: int = None) -> None:
         self.numero_voo = numero_voo
         self.origem = origem
         self.destino = destino
