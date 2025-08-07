@@ -89,26 +89,33 @@ class MiniAeronave:
         return f"{self.modelo} (Capacidade: {self.capacidade})"
 
     def __str__(self) -> str:
-        return self.resumo_voo
+        return self.resumo_voo()
 
 class Voo:
     """Classe para representar um voo"""
-    def __init__(self, numero_voo: str, origem: str, destino: str, aeronave: MiniAeronave) -> None:
+    def __init__(self, numero_voo: str, origem: str, destino: str, aeronave: MiniAeronave = Nonemodelo: str = None, capacidade: int = None) -> None:
         self.numero_voo = numero_voo
         self.origem = origem
         self.destino = destino
+        self.passageiros = []
+        self.tripulacao = []
+        
+        if not aeronave:
+            if modelo and capacidade:
+                aeronave = MiniAeronave(modelo, capacidade)
+            else:
+                raise ValueError("Aeronave inexistente ou argumentos necessários em falta")
+
         if isinstance(aeronave, MiniAeronave):
             self.aeronave = aeronave
         else:
             raise ValueError("Aeronave deve ser uma instância da classe MiniAeronave.")
-        self.passageiros = []
-        self.tripulacao = []
         
     def adicionar_passageiro(self, passageiro: Passageiro) -> None:
         if not isinstance(passageiro, Passageiro):
-            raise("Passageiro deve ser uma instância da classe Passageiro.")
+            raise ValueError("Passageiro deve ser uma instância da classe Passageiro.")
         elif not len(self.passageiros) < self.aeronave.capacidade:
-            print("Aeronave está cheia.")
+            raise ValueError("Aeronave está cheia.")
         else:
             print(f"{passageiro} Adicionado ao voo")
             self.passageiros.append(passageiro)
@@ -172,7 +179,7 @@ class CompanhiaAerea:
     def listar_voos(self) -> None:
         print(f"Lista de voos de {self.nome}:")
         for voo in self.voos:
-            print(f" Voo {voo.numero_voo}, de {voo.origem} para {voo.destino} - Aeronave: {voo.aeronave.resumo_voo()}")
+            print(f" Voo {voo.numero_voo}, de {voo.origem} para {voo.destino} - Aeronave: {voo.aeronave}")
 
 class Auditor(IdentificavelMixin, AuditavelMixin, Logavel):
     '''Auditor responsável por auditar os voos'''
@@ -198,7 +205,7 @@ class Auditor(IdentificavelMixin, AuditavelMixin, Logavel):
             print("- Nenhum tripulante registrado.")
             conformidade = False
             
-        if conformidade == True:
+        if conformidade:
             print("- Voo em conformidade.")
         else:
             print("- Voo NÃO está em conformidade.")
